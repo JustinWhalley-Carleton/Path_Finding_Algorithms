@@ -17,10 +17,12 @@ def reconstruct_path(path,grid,start,end,draw):
             y+=1
         path_length+=1
         grid[x][y].make_path()
-        draw()
+        if draw != None: # dont draw for testing
+            draw()
     end.make_end()
     start.make_start()
-    draw()
+    if draw != None: # dont draw for testing
+        draw()
     return path_length
 # check if node reached a dead end
 def hasMove(path,start,grid):
@@ -38,7 +40,7 @@ def hasMove(path,start,grid):
             y-=1
         if(move == "D"):
             y+=1
-    if x+1 <24:
+    if x+1 <=24:
         if(grid[x+1][y].is_closed() or grid[x+1][y].is_start() or grid[x+1][y].is_end()):
             flag1 = False
     else:
@@ -48,7 +50,7 @@ def hasMove(path,start,grid):
             flag2 = False
     else:
         flag2 = False
-    if y+1 <24:
+    if y+1 <=24:
         if(grid[x][y+1].is_closed() or grid[x][y+1].is_start() or grid[x][y+1].is_end()):
             flag3 = False
     else:
@@ -93,23 +95,23 @@ def hasMove(path,start,grid):
             y-=1
         if(move == "D"):
             y+=1
-    if x+1 <24:
-        if(grid[x+1][y].is_closed() or grid[x+1][y].is_start() or grid[x+1][y].is_end()):
+    if x+1 <=24:
+        if(grid[x+1][y].is_closed() or grid[x+1][y].is_start() or grid[x+1][y].is_wall()):
             flag1 = False
     else:
         flag1 = False
     if x-1 >0:
-        if(grid[x-1][y].is_closed() or grid[x-1][y].is_start() or grid[x-1][y].is_end()):
+        if(grid[x-1][y].is_closed() or grid[x-1][y].is_start() or grid[x-1][y].is_wall()):
             flag2 = False
     else:
         flag2 = False
-    if y+1 <24:
-        if(grid[x][y+1].is_closed() or grid[x][y+1].is_start() or grid[x][y+1].is_end()):
+    if y+1 <=24:
+        if(grid[x][y+1].is_closed() or grid[x][y+1].is_start() or grid[x][y+1].is_wall()):
             flag3 = False
     else:
         flag3 = False
     if y-1 >0:
-        if(grid[x][y-1].is_closed() or grid[x][y-1].is_start() or grid[x][y-1].is_end()):
+        if(grid[x][y-1].is_closed() or grid[x][y-1].is_start() or grid[x][y-1].is_wall()):
             flag4 = False
     else:
         flag4 = False
@@ -127,33 +129,35 @@ def isEnd(path,start,end):
             y-=1
         if(move == "D"):
             y+=1
-    if((x,y) == (endX,endY)):
+    if((x,y) == (endX,endY) or (x+1,y) == (endX,endY) or (x-1,y) == (endX,endY) or (x,y+1) == (endX,endY) or (x,y-1) == (endX,endY)):
         return True
     return False
+
 # main algorithm function
 def BFS(draw,grid,start,end):
     paths = queue.Queue()
     paths.put("")
     add = ""
+    path_arr = [True]
     # main loop to run the algorithm
     while not isEnd(add,start,end):
-        add = paths.get()
+        if not True in path_arr:
+            return
         path_arr = []
+        add = paths.get()
         #check all directions
         for direction in ["L","R","U","D"]:
             put = add + direction
             if moveValid(put,grid,start):
                 paths.put(put)
-                draw()
+                if draw != None: # dont draw for testing
+                    draw()
         dead_end = False
+
         # check if if all nodes lead to a deadend and stop execution if all nodes lead to a dead end
         for i in range(paths.qsize()):
             temp = paths.get()
             paths.put(temp)
             path_arr.append(hasMove(temp,start,grid))
-        for val in path_arr:
-            if(val):
-                dead_end = dead_end or val
-        if(not dead_end):
-            return
+        
     return reconstruct_path(add,grid,start,end,draw)

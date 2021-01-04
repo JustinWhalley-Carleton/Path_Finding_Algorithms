@@ -11,13 +11,15 @@ def reconstruct_path(stack,grid,start,draw):
         node = stack.get()
         node.make_path()
         path_length+=1
-        draw()
+        if draw != None: # dont draw when testing
+            draw()
     start.make_start()
-    draw()
+    if draw != None:  # dont draw when testing
+        draw()
     return path_length
 
 def DFS(draw,grid,start,end):
-    stack = LifoQueue(50*50)
+    stack = LifoQueue(25*25)
     stack.put(start)
     run = True
     while run:
@@ -32,7 +34,8 @@ def DFS(draw,grid,start,end):
                 stack.put(current)
                 stack.put(neighbor)
                 found_node = True
-                draw()
+                if draw != None: #dont draw when testing
+                    draw()
                 break
         if stack.empty():
             return

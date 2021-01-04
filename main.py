@@ -61,8 +61,10 @@ def main(win,width):
     started = False
     path_length = 0
     draw(win,grid,ROWS,width)
+    clock = pygame.time.Clock()
     # main loop to run program
     while run:
+        clock.tick(120)
         # add the current node type and algorithm on the bottom of the window
         algorithm_label = font.render(f"Algorithm = {algorithms[current_algorithm]}",1,BLACK)
         node_label = font.render(f"Node = {node_types[current_node]}",1,BLACK)

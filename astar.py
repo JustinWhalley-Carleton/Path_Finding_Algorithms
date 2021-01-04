@@ -4,17 +4,20 @@ from queue import PriorityQueue
 
 
 #display path on the window and count path length
-def reconstruct_path(came_from,current,draw):    
+def reconstruct_path(came_from,current,draw, start):    
     path = []   
     path_length = 0    
     while current in reversed(came_from):
         current = came_from[current]
         path.append(current)
     for current in reversed(path):
+        if current == start:
+            continue
         path_length+= 1
         current.make_path()
-        draw()
-    return path_length
+        if draw != None: # dontdraw for testing
+            draw()
+    return path_length 
 # main algorithm function
 def astar(grid,start,end,draw):
     # initialize variables
@@ -30,17 +33,13 @@ def astar(grid,start,end,draw):
     path_length = 0
     #main loop to find path
     while not open_set.empty():
-        #check if the exit button was clicked
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
         current = open_set.get()[2]
         open_set_hash.remove(current)
         # check if found the end
         if current == end:
             start.make_start()
             end.make_end()
-            return reconstruct_path(came_from,current,draw)
+            return reconstruct_path(came_from,current,draw,start)
         # check neighbors to see which is the best path
         for neighbor in current.neighbors:
             temp_g_score = g_score[current] + 1 
@@ -53,8 +52,9 @@ def astar(grid,start,end,draw):
                     open_set.put((f_score[neighbor],count,neighbor))
                     open_set_hash.add(neighbor)
                     neighbor.make_open()
-        #draw the checked nodes on the window
-        draw()
+        #draw the checked nodes on the window if not testing
+        if draw != None:
+            draw()
         #close the node if neighbors were checked
         if current != start:
             current.make_closed()
